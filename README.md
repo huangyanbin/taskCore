@@ -1,0 +1,2 @@
+# taskCore
+like simple rxjava
