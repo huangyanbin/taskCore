@@ -32,7 +32,7 @@ root gradle:
 
 第二步：
 
-	compile 'com.github.huangyanbin:taskCore:e3d7f38b04'**
+	compile 'com.github.huangyanbin:taskCore:e3d7f38b04'
 
 **1.首先初始化建议在Application onCreate();**
 
