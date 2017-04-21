@@ -17,6 +17,22 @@ taskCore
 
 - - -
 - 使用说明：
+**集成：**
+
+第一步：
+
+root gradle:
+
+	allprojects {
+    		repositories {
+        	maven { url 'https://jitpack.io' }
+        	jcenter()
+    		}
+	}
+
+第二步：
+
+	compile 'com.github.huangyanbin:taskCore:e3d7f38b04'**
 
 **1.首先初始化建议在Application onCreate();**
 
