@@ -24,10 +24,10 @@ taskCore
 root gradle:
 
 	allprojects {
-    		repositories {
+    	     repositories {
         	maven { url 'https://jitpack.io' }
         	jcenter()
-    		}
+    	    }
 	}
 
 第二步：
