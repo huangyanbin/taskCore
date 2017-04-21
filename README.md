@@ -32,16 +32,16 @@ TaskLoader.getInstance().init();
                 .execute(new BaseResult<String>() {
                     @Override
                     public void onStart() {
-                        Toast.makeText(MainActivity.this, "开始处理数据了", Toast.LENGTH_SHORT).show(); //主线程通知开始执行任务
+                        Toast.makeText(MainActivity.this, "开始处理数据了", Toast.LENGTH_SHORT).show(); /**主线程通知开始执行任务**/
                    }
 
                     @Override
                     public void onGetData(String s) {
-                        Toast.makeText(MainActivity.this, "完成处理了", Toast.LENGTH_SHORT).show();//主线程通知执行后任务的数据
+                        Toast.makeText(MainActivity.this, "完成处理了", Toast.LENGTH_SHORT).show();/**主线程通知执行后任务的数据**/
                     }
 					@Override
                     public void onFinish() {
-                        Toast.makeText(MainActivity.this, "完成处理了", Toast.LENGTH_SHORT).show();//主线程通知执行完任务
+                        Toast.makeText(MainActivity.this, "完成处理了", Toast.LENGTH_SHORT).show();/**主线程通知执行完任务**/
                     }
 
                 });
