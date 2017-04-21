@@ -1,7 +1,7 @@
 
 taskCore
 ==
-taskCore 一个类似rxjava simple版的任务切换，在Android中常使用到。
+***taskCore 一个类似rxjava simple版的任务切换，在Android中常使用到。***
 -功能说明：
 
 ***1.异步任务切换到UI线程,并回调相关数据（类似rxjava和imageLoader两种模式）***
@@ -12,7 +12,7 @@ taskCore 一个类似rxjava simple版的任务切换，在Android中常使用到
 
 ***4.设置回调Hanlder线程***
 
-***5.支持设置异步线程回调 （默认在UI线程）在Result的onStart onGetData onFinish相关方法中***
+***5.支持设置异步线程回调 （默认在UI线程）onStart onGetData onFinish***
 
 - - -
 -使用说明：
@@ -22,26 +22,25 @@ taskCore 一个类似rxjava simple版的任务切换，在Android中常使用到
 TaskLoader.getInstance().init();
 
 **2.使用Task创建一个任务Action，并执行回调 Result（注意不设置回调任务不会执行）onHandle 在异步线程，onGetData,onStart,onFinish在主线程。**
-       
-       Task.create(new Action<String>() {
+        Task.create(new Action<String>() {
             @Override
             public String onHandle() {
-                return "异步处理数据";//在异步线程执行
-          }
+                return "异步处理数据";
+            }
         }, new TaskOption.Builder().setDelayAfter(5 * 1000).setDelayBefore(5 * 1000).build())
                 .execute(new BaseResult<String>() {
                     @Override
                     public void onStart() {
-                        Toast.makeText(MainActivity.this, "开始处理数据了", Toast.LENGTH_SHORT).show(); /**主线程通知开始执行任务**/
-                   }
+                        Toast.makeText(MainActivity.this, "开始处理数据了", Toast.LENGTH_SHORT).show();
+                    }
 
                     @Override
                     public void onGetData(String s) {
-                        Toast.makeText(MainActivity.this, "完成处理了", Toast.LENGTH_SHORT).show();/**主线程通知执行后任务的数据**/
-                    }
+                        Toast.makeText(MainActivity.this, "完成处理了", Toast.LENGTH_SHORT).show();
+                    }
 					@Override
                     public void onFinish() {
-                        Toast.makeText(MainActivity.this, "完成处理了", Toast.LENGTH_SHORT).show();/**主线程通知执行完任务**/
+                        Toast.makeText(MainActivity.this, "完成处理了", Toast.LENGTH_SHORT).show();
                     }
 
                 });
