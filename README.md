@@ -3,7 +3,8 @@ taskCore
 ==
 ***taskCore 一个类似rxjava simple版的任务切换，在Android中常使用到。***
 
--功能说明：
+-
+功能说明：
 
 ***1.异步任务切换到UI线程,并回调相关数据（类似rxjava和imageLoader两种模式）***
 
@@ -16,7 +17,8 @@ taskCore
 ***5.支持设置异步线程回调 （默认在UI线程）onStart onGetData onFinish***
 
 - - -
--使用说明：
+-
+使用说明：
 
 **1.首先初始化建议在Application onCreate();**
 
