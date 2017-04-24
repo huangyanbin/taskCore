@@ -3,6 +3,10 @@ package com.mewifi.taskcore;
 import com.mewifi.taskcore.listener.Result;
 import com.mewifi.taskcore.listener.SimpleTaskResult;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 
 /**
  * Created by David on 2017/4/21.
@@ -16,6 +20,7 @@ public class TaskLoader {
     private volatile static TaskLoader instance;
 
     private static final String ERROR_INIT_CONFIG_WITH_NULL = "请先配置任务参数";
+    private final List<TaskInfo> taskInfos;
     private final Result emptyResult = new SimpleTaskResult();
 
     /** Returns singleton class instance */
@@ -31,6 +36,7 @@ public class TaskLoader {
     }
 
     protected TaskLoader() {
+        this.taskInfos = new ArrayList<>();
     }
 
     /**
@@ -96,7 +102,7 @@ public class TaskLoader {
      * @param tag
      * @param options
      */
-    public void execute(Action<?> action,String tag,TaskOption options, Result<?> result) {
+    public void execute(Action<?> action,Object tag,TaskOption options, Result<?> result) {
         if(action == null){
             return;
         }
@@ -111,29 +117,68 @@ public class TaskLoader {
             taskCounter++;
             tag = "task:"+taskCounter;
         }
-        TaskInfo taskInfo = new TaskInfo(action, options, result, engine.getLockForUri(tag));
+        TaskInfo taskInfo = new TaskInfo(action, options, result,tag);
         exeTask(taskInfo);
 
     }
     /**
      * 创建任务
      */
-     TaskInfo<?> createTask(Action<?> action,TaskOption options) {
+     TaskInfo<?> createTask(Action<?> action,TaskOption options,Object tag) {
         checkConfiguration();
          taskCounter++;
-         String tag = "task:"+taskCounter;
+         if(tag == null) {
+             taskCounter++;
+             tag = "task:"+taskCounter;
+         }
          if (options == null) {
              options = configuration.defaultTaskOptions;
          }
-        TaskInfo<?> taskInfo = new TaskInfo(action,options, engine.getLockForUri(tag));
+        TaskInfo<?> taskInfo = new TaskInfo(action,options, tag);
         return taskInfo;
     }
 
-      void exeTask(TaskInfo<?> taskInfo){
+
+    /**
+     * 执行任务
+     * @param taskInfo
+     */
+    void exeTask(TaskInfo<?> taskInfo){
+         taskInfos.add(taskInfo);
          BackgroundTask<?> displayTask = new BackgroundTask(engine, taskInfo);
          engine.submit(displayTask);
      }
 
+
+    /**
+     * 任务完成通知
+     * @param taskInfo
+     */
+    void onFinishTask(TaskInfo taskInfo){
+         taskInfos.remove(taskInfo);
+     }
+
+    /**
+     * 取消任务执行
+     */
+    public void cancelTask(TaskInfo taskInfo){
+        if(taskInfos.contains(taskInfo)) {
+            taskInfo.setCancel(true);
+        }
+    }
+    /**
+     * 取消任务执行
+     */
+    public void cancelTask(Object tag){
+
+        for(TaskInfo taskInfo :taskInfos){
+            if(taskInfo != null && taskInfo.getTag() != null) {
+                if (taskInfo.getTag().equals(tag)) {
+                    taskInfo.setCancel(true);
+                }
+            }
+        }
+    }
 
     /**
      * 检查配置

@@ -28,25 +28,35 @@ final class BackgroundTask<T> implements Runnable {
         options = taskInfo.options;
     }
 
+    /**
+     * 执行任务
+     */
     @Override
     public void run() {
+
+        if(cancel()) return;
         onStart();
         if (waitIfPaused()) return;
         if (delayBeforeIfNeed()) return; //延迟
-        ReentrantLock loadFromUriLock = taskInfo.loadFromUriLock;
-        loadFromUriLock.lock();
+        if(cancel()) return;
         T t = null;
         try {
             t = taskInfo.action.onHandle();
-        } finally {
-            loadFromUriLock.unlock();
+        } catch (Exception e){
+
         }
+        if(cancel()) return;
         if (delayAfterIfNeed()) return; //延迟
         if ( checkTaskIsInterrupted()) return;
+        if(cancel()) return;
         CallBackTask<T> callBackTask = new CallBackTask<>(taskInfo,engine ,t);
         handler.post(callBackTask);
+        onFinish();
     }
 
+    /**
+     * 任务开始回调
+     */
     public void onStart(){
         handler.post(new Runnable() {
             @Override
@@ -56,7 +66,13 @@ final class BackgroundTask<T> implements Runnable {
         });
     }
 
+    /**
+     * 任务完成回调
+     */
     public void onFinish(){
+
+        taskInfo.setFinish(true);
+        TaskLoader.getInstance().onFinishTask(taskInfo);
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -65,6 +81,23 @@ final class BackgroundTask<T> implements Runnable {
         });
     }
 
+    /**
+     * 任务取消
+     * @return 取消
+     */
+    public boolean cancel(){
+
+        if(taskInfo.isCancel()){
+           TaskLoader.getInstance().onFinishTask(taskInfo);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 是否暂停
+     * @return
+     */
     private boolean waitIfPaused() {
         AtomicBoolean pause = engine.getPause();
         synchronized (pause) {
@@ -81,6 +114,10 @@ final class BackgroundTask<T> implements Runnable {
         return false;
     }
 
+    /**
+     * 延迟在任务执行之前
+     * @return
+     */
     private boolean delayBeforeIfNeed() {
         if (options.shouldDelayBeforeLoading()) {
             try {
@@ -94,6 +131,10 @@ final class BackgroundTask<T> implements Runnable {
         return false;
     }
 
+    /**
+     * 延迟在任务执行之后
+     * @return
+     */
     private boolean delayAfterIfNeed() {
         if (options.shouldDelayAfterLoading()) {
             try {
@@ -106,6 +147,10 @@ final class BackgroundTask<T> implements Runnable {
         return false;
     }
 
+    /**
+     * 检查线程是否被终止
+     * @return
+     */
     private boolean checkTaskIsInterrupted() {
         boolean interrupted =  Thread.interrupted();
         if(interrupted){

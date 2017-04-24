@@ -19,6 +19,5 @@ final class CallBackTask<T> implements Runnable {
 
     public void run() {
         taskInfo.result.onGetData(t);
-        taskInfo.result.onFinish();
     }
 }

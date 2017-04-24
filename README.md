@@ -1,19 +1,17 @@
-
 taskCore
-==
-***taskCore 一个类似rxjava simple版的任务切换，在Android中常使用到。***
+========
+***taskCore 一个类似rxjava 简单版的任务切换，在Android中常使用到。***
 - - -
 - 功能说明：
 
-***1.异步任务切换到UI线程,并回调相关数据（类似rxjava和imageLoader两种模式）***
+***1.异步任务执行完,主动切换到UI线程回调相关数据***
 
 ***2.支持设置异步线程执行前后暂停时间***
 
-***3.设置线程池执行模式，大小、等级（支持FIFO, LIFO）***
+***3.设置线程池执行模式，数量、等级（支持FIFO, LIFO）***
 
-***4.设置回调Hanlder线程***
+***4.设置回调Handler线程，默认回调到UI线程***
 
-***5.支持设置异步线程回调 （默认在UI线程）onStart onGetData onFinish***
 
 - - -
 - 使用说明：
@@ -38,14 +36,14 @@ root gradle:
 
 TaskLoader.getInstance().init();
 
-**2.使用Task创建一个任务Action，并执行回调 Result（注意不设置回调任务不会执行）onHandle 在异步线程，onGetData,onStart,onFinish在主线程。**
+**2.使用Task创建一个任务Action，并执行回调 Result,onHandle 在异步线程，onGetData在UI线程。支持设置Tag取消任务（不设置回调任务不会执行）**
         
 	Task.create(new Action<String>() {
             @Override
             public String onHandle() {
                 return "异步处理数据";
             }
-        }, new TaskOption.Builder().setDelayAfter(5 * 1000).setDelayBefore(5 * 1000).build())
+        }, new TaskOption.Builder().setDelayAfter(5 * 1000).setDelayBefore(5 * 1000).build(),tag)
                 .execute(new BaseResult<String>() {
                     @Override
                     public void onStart() {
@@ -81,4 +79,8 @@ TaskLoader.getInstance().init();
                     }
                 });
 
-**4.更多功能**		
+**4.取消任务执行**
+
+	    Task.cancel(tag);
+
+**5.更多功能**

@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
             public String onHandle() {
                 return "1111";
             }
-        }, new TaskOption.Builder().setDelayAfter(5 * 1000).setDelayBefore(5 * 1000).build())
+        }, new TaskOption.Builder().setDelayAfter(5 * 1000).setDelayBefore(5 * 1000).build(),this)
                 .execute(new BaseResult<String>() {
                     @Override
                     public void onStart() {
@@ -38,23 +38,18 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "onGetData1", Toast.LENGTH_SHORT).show();
                     }
 
-
-                });
-
-
-        TaskLoader.getInstance().execute(new Action<String>() {
-                                             @Override
-                                             public String onHandle() {
-
-                                                 return "22222222";
-                                             }
-                                         }
-                , new BaseResult<String>() {
-
                     @Override
-                    public void onGetData(String s) {
-                        Toast.makeText(MainActivity.this, "onGetData2", Toast.LENGTH_SHORT).show();
+                    public void onFinish() {
+                        Toast.makeText(MainActivity.this, "onFinish", Toast.LENGTH_SHORT).show();
+                        super.onFinish();
                     }
                 });
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        Task.cancel(this);
+        super.onDestroy();
     }
 }
